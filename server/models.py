@@ -19,8 +19,14 @@ class Employee(db.Model):
     name = db.Column(db.String)
     hire_date = db.Column(db.Date)
 
+    reviews = db.relationship('Review', back_populates='employee', cascade='all, delete-orphan')
+
+    onboarding = db.relationship("Onboarding", back_populates="employee", uselist=False, cascade='all, delete-orphan')
+
     def __repr__(self):
         return f"<Employee {self.id}, {self.name}, {self.hire_date}>"
+    
+   
 
 
 class Onboarding(db.Model):
@@ -29,6 +35,11 @@ class Onboarding(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     orientation = db.Column(db.DateTime)
     forms_complete = db.Column(db.Boolean, default=False)
+
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'))
+
+    employee = db.relationship("Employee", back_populates="onboarding")
+
 
     def __repr__(self):
         return f"<Onboarding {self.id}, {self.orientation}, {self.forms_complete}>"
@@ -40,6 +51,9 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     year = db.Column(db.Integer)
     summary = db.Column(db.String)
+
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'))
+    employee = db.relationship('Employee', back_populates='reviews')
 
     def __repr__(self):
         return f"<Review {self.id}, {self.year}, {self.summary}>"
